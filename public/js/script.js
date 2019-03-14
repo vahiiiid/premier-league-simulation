@@ -15,9 +15,11 @@ $(document).ready(function () {
 
     $(".reset-all").click(function () {
         $.get("reset-all", function () {
-            refreshFixture();
-            refreshStanding();
-            $('.prediction-wrapper').empty();
+            setTimeout(function(){
+                refreshFixture();
+                refreshStanding();
+                $('.prediction-wrapper').empty();
+            }, 1000);
         });
     });
 

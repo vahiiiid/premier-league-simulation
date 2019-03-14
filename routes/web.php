@@ -11,6 +11,14 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'MainController@getStarting');
+Route::get('/reset-all', 'MainController@resetAll');
+Route::get('/standings', 'MainController@getStandings');
+Route::get('/fixtures', 'MainController@getFixtures');
+
+//predictionController
+Route::get('/prediction', 'PredictionController@getPrediction');
+
+//simulatorController
+Route::get('/play-all-weeks', 'SimulatorController@playAllWeeks');
+Route::get('/play-week/{weekId}', 'SimulatorController@playWeekly');

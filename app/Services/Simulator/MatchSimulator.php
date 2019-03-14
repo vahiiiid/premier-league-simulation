@@ -27,7 +27,6 @@ class MatchSimulator implements ResultSimulatorInterface
     {
         $home = $this->standingRepository->getStandingByTeamId($match->home_team);
         $away = $this->standingRepository->getStandingByTeamId($match->away_team);
-        dd($home);
         $homeScore = $this->matchRepository->generateScore(true, $home->id);
         $awayScore = $this->matchRepository->generateScore(false, $away->id);
 

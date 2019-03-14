@@ -127,7 +127,6 @@ $(document).ready(function () {
             html +=  "<tbody>";
 
             $.each( data.items, function (i,  data) {
-                console.log(data, 'fefef');
                 html +=  "<tr>";
                 html +=  "<th scope='row'>" + data[0] + "</th>";
                 html +=  "<td>" + data[1] + " % </td>";

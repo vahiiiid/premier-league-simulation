@@ -32,6 +32,10 @@ class StandingRepository
 
     public function createStanding()
     {
+        $result = $this->standing->get();
+        if (!$result->isEmpty()) {
+            return;
+        }
         foreach ($this->getTeams() as $value) {
             $data = [
                 'team_id'    => $value,

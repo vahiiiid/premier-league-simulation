@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repositories\MatchRepository;
 use App\Repositories\StandingRepository;
+use App\Services\FixtureDraw\HomeAndAwayDraw;
 
 class MainController extends Controller
 {
@@ -27,6 +28,8 @@ class MainController extends Controller
 
     public function getStarting()
     {
+        $drawService = new HomeAndAwayDraw($this->matchRepository->getTeamId());
+        dd($drawService->getFixturesPlan());
 
         $this->matchRepository->createFixture();
         $fixture = $this->matchRepository->getFixture();
@@ -47,6 +50,9 @@ class MainController extends Controller
     {
         $this->matchRepository->truncateMatches();
         $this->standingRepository->truncateStanding();
+        $drawService = new HomeAndAwayDraw($this->matchRepository->getTeamId());
+        dd($drawService->getFixturesPlan());
+
         $this->matchRepository->createFixture();
     }
 

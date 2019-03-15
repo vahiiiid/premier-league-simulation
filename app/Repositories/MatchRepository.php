@@ -30,7 +30,7 @@ class MatchRepository
 
     public function getTeamId()
     {
-        return $this->team->pluck('id');
+        return $this->team->pluck('id')->toArray();
     }
 
 

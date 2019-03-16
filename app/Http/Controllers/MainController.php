@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\MatchRepository;
 use App\Repositories\StandingRepository;
 use App\Services\FixtureDraw\HomeAndAwayDraw;
+use App\Services\Prediction\SimplePrediction;
 
 class MainController extends Controller
 {
@@ -14,46 +15,50 @@ class MainController extends Controller
     public function __construct(StandingRepository $standingRepository, MatchRepository $matchRepository)
     {
         $this->standingRepository = $standingRepository;
-        $this->matchRepository = $matchRepository;
-        $this->handleStanding();
+        $this->matchRepository    = $matchRepository;
+        $this->handleRequirements();
     }
 
-    public function handleStanding()
+    public function handleRequirements()
     {
         //check if there is no standing yet, make it
-        if ($this->standingRepository->checkStanding()) {
+        if (!$this->standingRepository->checkStanding()) {
             $this->standingRepository->createStanding();
+        }
+        //check if all matches are drawn
+        if (!$this->matchRepository->checkIfFixturesDrawn()) {
+            $this->makeFixtures();
         }
     }
 
     public function getStarting()
     {
-        $drawService = new HomeAndAwayDraw($this->matchRepository->getTeamId());
-        dd($drawService->getFixturesPlan());
 
-        $this->matchRepository->createFixture();
-        $fixture = $this->matchRepository->getFixture();
+        $fixture    = $this->matchRepository->getFixture();
         $collection = collect($fixture);
-        $matches = $collection->groupBy('week_id');
+        $matches    = $collection->groupBy('week_id');
 
         return view(
             'landing',
             [
                 'standing' => $this->standingRepository->getAll(),
-                'weeks'    => $this->matchRepository->getWeeks(),
-                'matches'  => $matches->toArray()
+                'weeks' => $this->matchRepository->getWeeks(),
+                'matches' => $matches->toArray()
             ]);
 
+    }
+
+    public function makeFixtures()
+    {
+        $drawService = new HomeAndAwayDraw($this->matchRepository->getTeamsId());
+        $this->matchRepository->createFixture($drawService->getFixturesPlan());
     }
 
     public function resetAll()
     {
         $this->matchRepository->truncateMatches();
         $this->standingRepository->truncateStanding();
-        $drawService = new HomeAndAwayDraw($this->matchRepository->getTeamId());
-        dd($drawService->getFixturesPlan());
-
-        $this->matchRepository->createFixture();
+        $this->makeFixtures();
     }
 
     public function getStandings()
@@ -63,10 +68,10 @@ class MainController extends Controller
 
     public function getFixtures()
     {
-        $weeks = $this->matchRepository->getWeeks();
-        $fixture = $this->matchRepository->getFixture();
+        $weeks      = $this->matchRepository->getWeeks();
+        $fixture    = $this->matchRepository->getFixture();
         $collection = collect($fixture);
-        $grouped = $collection->groupBy('week_id');
+        $grouped    = $collection->groupBy('week_id');
         return response()->json(['weeks' => $weeks, 'items' => $grouped->toArray()]);
     }
 

@@ -11,7 +11,7 @@ $(document).ready(function () {
         });
     });
 
-    $(".reset-all").click(function () {
+    $(".reset-all").on('click', function () {
         $.get("reset-all", function () {
             refreshStanding();
             setTimeout(function () {
@@ -32,9 +32,9 @@ $(document).ready(function () {
                 html += "<tr><td colspan='3' style='font-weight: bold; text-align: center;background: skyblue;'>" + week.title + " Week Matches</td></tr>";
                 $.each(data.items[week.id], function (i, item) {
                     html += "<tr>";
-                    html += "<td style='text-align: center;'><img width='30' height='30' src='/images/" + item.home_shirt + "'>" + item.home_team + "</td>";
+                    html += "<td style='text-align: center;'><img width='30' height='30' src='/images/home_blue.png'><img width='50' height='50' src='/images/" + item.home_shirt + "'>" + item.home_team + "</td>";
                     html += "<td style='text-align: center;'>" + item.home_team_goal + " - " + item.away_team_goal + "</td>";
-                    html += "<td style='text-align: center;'><img width='30' height='30' src='/images/" + item.away_shirt + "'>" + item.away_team + "</td>";
+                    html += "<td style='text-align: center;'><img width='30' height='30' src='/images/airplane_blue.png'><img width='50' height='50' src='/images/" + item.away_shirt + "'>" + item.away_team + "</td>";
                     html += "</tr>";
                 });
                 if (data.items[week.id][0].status == 0) {
@@ -83,7 +83,6 @@ $(document).ready(function () {
             showData.hide();
 
             $.each(data.matches, function (i, item) {
-                console.log('inja', item, i);
                 var html = "";
                 if (i == 0) {
                     html += "<tr>"
@@ -130,10 +129,10 @@ $(document).ready(function () {
             html += "</thead>";
             html += "<tbody>";
 
-            $.each(data.items, function (i, data) {
+            $.each(data.items, function (team, percent) {
                 html += "<tr>";
-                html += "<th scope='row'>" + data[0] + "</th>";
-                html += "<td>" + data[1] + " % </td>";
+                html += "<th scope='row'>" + team + "</th>";
+                html += "<td>" + percent + " % </td>";
                 html += "</tr>";
             });
 

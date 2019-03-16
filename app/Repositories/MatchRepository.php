@@ -22,13 +22,13 @@ class MatchRepository
 
     public function __construct(Team $team, Match $match, Week $week)
     {
-        $this->team = $team;
+        $this->team  = $team;
         $this->match = $match;
-        $this->week = $week;
+        $this->week  = $week;
     }
 
 
-    public function getTeamId()
+    public function getTeamsId()
     {
         return $this->team->pluck('id')->toArray();
     }
@@ -45,37 +45,20 @@ class MatchRepository
         return $this->week->get();
     }
 
-    public function createFixture()
+    public function createFixture($fixtures)
     {
-        foreach ($this->getWeeksId() as $week) {
-            foreach ($this->iterateTeams($this->getTeamId()) as $value) {
-                if (0 == $this->checkMatch($week, $value)) {
-                    $this->match->create(['home_team' => $value[0], 'away_team' => $value[1], 'week_id' => $week]);
-                }
-
-            }
-
+        foreach ($fixtures as $fixture) {
+            $this->match->create([
+                'home_team' => $fixture['home'],
+                'away_team' => $fixture['away'],
+                'week_id' => $fixture['week']
+            ]);
         }
     }
 
-    private function iterateTeams($teams)
+    public function checkIfFixturesDrawn()
     {
-        $collection = collect($teams);
-        $matrix = $collection->crossJoin($teams);
-        $data = $matrix->reject(function ($items) {
-
-            if ($items[0] == $items[1]) {
-                return $items;
-            }
-        })->shuffle();
-        return $data->all();
-    }
-
-    public function checkMatch($week_id, $teams)
-    {
-        return $this->match->where('week_id', '=', $week_id)
-            ->whereRaw('(home_team IN(' . implode(',', $teams) . ') OR away_team IN(' . implode(',', $teams) . '))')
-            ->count();
+        return $this->match->count() ? true : false;
     }
 
 
@@ -147,6 +130,17 @@ class MatchRepository
         return $this->match->where('status', '=', $status)->get();
     }
 
+    public function getAllMatchesByTeamId($teamId)
+    {
+        return $this->match
+            ->where(function ($q) use ($teamId){
+                $q->where('home_team', '=', $teamId)
+                    ->orWhere('away_team', '=', $teamId);
+            })
+            ->where('status', '=', 0)
+            ->get();
+    }
+
     /**
      * @param $homeScore
      * @param $awayScore
@@ -156,20 +150,20 @@ class MatchRepository
     public function updateMatchScore($homeScore, $awayScore, $home, $away)
     {
         if ($homeScore > $awayScore) {
-            $home->won += 1;
-            $home->points += 3;
+            $home->won        += 1;
+            $home->points     += 3;
             $home->goal_drawn += ($homeScore - $awayScore);
-            $away->lose += 1;
+            $away->lose       += 1;
             $away->goal_drawn += ($awayScore - $homeScore);
         } elseif ($awayScore > $homeScore) {
-            $away->won += 1;
-            $away->points += 3;
+            $away->won        += 1;
+            $away->points     += 3;
             $away->goal_drawn += ($awayScore - $homeScore);
-            $home->lose += 1;
+            $home->lose       += 1;
             $home->goal_drawn += ($homeScore - $awayScore);
         } else {
-            $home->draw += 1;
-            $away->draw += 1;
+            $home->draw   += 1;
+            $away->draw   += 1;
             $home->points += 1;
             $away->points += 1;
         }
@@ -200,7 +194,7 @@ class MatchRepository
     {
         $match->home_team_goal = $homeScore;
         $match->away_team_goal = $awayScore;
-        $match->status = 1;
+        $match->status         = 1;
         return $match->save();
     }
 

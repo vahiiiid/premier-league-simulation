@@ -26,7 +26,8 @@
         <div><strong>2 </strong> you can see standings and future matches, then you can choose to simulate weekly or all the weeks matches immediately</div>
         <div><strong>3 </strong> there is also a champion predictor with current team standings</div>
         <div><strong>4 </strong> in each week you can reset all the cup and do every thing from zero</div>
-        <div><strong>5 </strong> <span style="font-weight: bold;">Please note home teams with better standings rank have higher chance to win the match</span> </div>
+        <div><strong>5 </strong> in this league each team play 6 games including 2 times against another team, one home and one away</div>
+        <div><strong>6 </strong> <span style="font-weight: bold;">Please note home teams with better standings rank have higher chance to win the match</span> </div>
     </div>
 </div>
 
@@ -84,8 +85,7 @@
                 @if (!empty($weeks))
                     @foreach($weeks as $week)
                         <tr>
-                            <td colspan="3"
-                                style="font-weight: bold; text-align: center;background: skyblue;">{{$week->title}} Week
+                            <td colspan="3" style="font-weight: bold; text-align: center;background: skyblue;">{{$week->title}} Week
                                 Matches
                             </td>
                         </tr>
@@ -94,6 +94,8 @@
                                 <tr>
                                     <td style="text-align: center;">
                                         <img width="30" height="30"
+                                             src="{{asset('images/home_blue.png')}}">
+                                        <img width="50" height="50"
                                              src="{{asset('images/' . $fixture['home_shirt'])}}">
                                         {{$fixture['home_team']}}
                                     </td>
@@ -101,6 +103,8 @@
                                         - {{$fixture['away_team_goal']}}</td>
                                     <td style="text-align: center;">
                                         <img width="30" height="30"
+                                             src="{{asset('images/airplane_blue.png')}}">
+                                        <img width="50" height="50"
                                              src="{{asset('images/' . $fixture['away_shirt'])}}">
                                         {{$fixture['away_team']}}
                                     </td>

@@ -17,55 +17,87 @@ class HomeAndAwayDraw implements FixtureDrawInterface
     public function __construct(array $teams)
     {
         $this->teams = $teams;
+        shuffle($this->teams);
     }
 
     public function getFixturesPlan()
     {
-        $numberOfWeeks = $this->getNumberOfWeeks(count($this->teams));
+        $numberOfWeeks          = $this->getNumberOfWeeks(count($this->teams));
         $numberOfWeeklyFixtures = $this->getNumberOfWeeklyFixtures(count($this->teams));
-        $allFixtures = $this->makeAllFixtures();
-        $weeklyFixtures = $this->makeWeeklyFixtures($numberOfWeeks, $numberOfWeeklyFixtures, $allFixtures);
-        return $weeklyFixtures;
+        $allFixtures            = $this->makeAllFixtures();
+        $weeklyFixtures         = $this->makeWeeklyFixtures($numberOfWeeks, $numberOfWeeklyFixtures, $allFixtures);
+        return $this->flatFixtures($weeklyFixtures);
+    }
 
+    public function flatFixtures($fixtures)
+    {
+        $flatFixturesArray = [];
+        $allWeekFixtures   = array_values($fixtures);
+        foreach ($allWeekFixtures as $weekFixtures) {
+            foreach ($weekFixtures as $fixture) {
+                $flatFixturesArray[] = $fixture;
+            }
+        }
+
+        return $flatFixturesArray;
     }
 
     public function makeWeeklyFixtures(int $numberOfWeeks, int $numberOfWeeklyFixtures, array $allFixtures)
     {
 
         $generatedWeeklyFixtures = [];
+        //loop on weeks to generate all weeks
         for ($i = 1; $i <= $numberOfWeeks; $i++) {
+            //loop on each week number of match to generate them
             for ($j = 1; $j <= $numberOfWeeklyFixtures; $j++) {
-                foreach ($allFixtures as $fixture) {
 
-                    if (count($generatedWeeklyFixtures) === 0) {
-                        $generatedWeeklyFixtures[] = [
-                            'home'   => $fixture['home'],
-                            'away'   => $fixture['away'],
-                            'week'   => $i,
-                            'status' => 0
-                        ];
+                foreach ($allFixtures as &$fixture) {
+
+                    if ($fixture['used'] === 1) {
                         continue;
                     }
-                    foreach ($generatedWeeklyFixtures as $f) {
-                        if (($f['home'] === $fixture['home'] || $f['away'] === $fixture['away']) && $f['week'] === $i) {
-                            dd('injaaaaaaaa');
-                            continue;
-                        }
 
-                        $generatedWeeklyFixtures[] = [
-                            'home'   => $fixture['home'],
-                            'away'   => $fixture['away'],
-                            'week'   => $i,
-                            'status' => 0
-                        ];
-                        dd('iaalaanaaaaa', $generatedWeeklyFixtures);
+                    $flag = false;
+                    if (!count($generatedWeeklyFixtures) === 0 || array_key_exists($i, $generatedWeeklyFixtures)) {
+                        $flag = $this->isMatchDuplicatedInWeek($fixture, $generatedWeeklyFixtures[$i], $i);
                     }
+
+                    if ($flag) {
+                        continue;
+                    }
+
+                    $generatedWeeklyFixtures[$i][] = [
+                        'home' => $fixture['home'],
+                        'away' => $fixture['away'],
+                        'week' => $i,
+                        'status' => 0
+                    ];
+
+                    $fixture['used'] = 1;
+                    break;
                 }
             }
         }
 
-        dd($generatedWeeklyFixtures);
+        return $generatedWeeklyFixtures;
+    }
 
+    public function isMatchDuplicatedInWeek($fixture, $allFixtures): bool
+    {
+        $response = false;
+        foreach ($allFixtures as $f) {
+            if (
+            (
+                ($fixture['home'] == $f['home'] || $fixture['home'] == $f['away']) ||
+                ($fixture['away'] == $f['away'] || $fixture['away'] == $f['home'])
+            )
+            ) {
+                $response = true;
+                break;
+            }
+        }
+
+        return $response;
     }
 
     public function getNumberOfWeeks($teamCount)
@@ -75,7 +107,6 @@ class HomeAndAwayDraw implements FixtureDrawInterface
         }
 
         return ($teamCount - 1) / 2;
-
     }
 
     public function getNumberOfWeeklyFixtures($teamCount)
@@ -94,12 +125,12 @@ class HomeAndAwayDraw implements FixtureDrawInterface
                 }
                 $fixtures[] = [
                     'home' => $homeTeam,
-                    'away' => $awayTeam
+                    'away' => $awayTeam,
+                    'used' => 0
                 ];
             }
         }
         return $fixtures;
-
     }
 
 }

@@ -27,7 +27,7 @@ class StandingRepository
     public function checkStanding()
     {
         $result = $this->standing->get();
-        return $result->isEmpty();
+        return $result->isEmpty() ? false : true;
     }
 
     public function createStanding()

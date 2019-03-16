@@ -5,15 +5,15 @@ list of features:
 
 | Feature                                  | Status        |
 | ---------------------------------------- | ------------- |
-| random weekly match                      | [x]           |
-| simulate each week separately            | [x]           |
-| simulate all the weeks immediately       | [x]           |
-| reset all played match                   | [x]           |
-| predict champions                        | [x]           |
-| different win chance for teams           | [x]           |
-| home and away fixtures  | Content Cell   | [x]           |
-| can increase number of default 4 teams   | [x]           |
-| edit played match result                 | [ ]           |
+| Random weekly match                      | &#9745;       |
+| Simulate each week separately            | &#9745;       |
+| Simulate all weeks immediately           | &#9745;       |
+| reset all played match                   | &#9745;       |
+| predict champions                        | &#9745;       |
+| different win chance for teams           | &#9745;       |
+| home and away fixtures                   | &#9745;       |
+| can increase number of default 4 teams   | &#9745;       |
+| edit played match result                 | &#9744;       |
 
 ## Getting Started
 

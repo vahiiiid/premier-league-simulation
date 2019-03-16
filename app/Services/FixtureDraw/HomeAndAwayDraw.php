@@ -25,6 +25,7 @@ class HomeAndAwayDraw implements FixtureDrawInterface
         $numberOfWeeks          = $this->getNumberOfWeeks(count($this->teams));
         $numberOfWeeklyFixtures = $this->getNumberOfWeeklyFixtures(count($this->teams));
         $allFixtures            = $this->makeAllFixtures();
+        shuffle($allFixtures);
         $weeklyFixtures         = $this->makeWeeklyFixtures($numberOfWeeks, $numberOfWeeklyFixtures, $allFixtures);
         return $this->flatFixtures($weeklyFixtures);
     }

@@ -103,9 +103,8 @@ $(document).ready(function () {
             });
             showData.show('slow');
 
+            refreshFixture();
         });
-
-        refreshFixture();
     }
 
     function prediction() {

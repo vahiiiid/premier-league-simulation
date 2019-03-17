@@ -154,8 +154,8 @@
                         <th scope='col'>Percentage</th>
                     </tr>
                     </thead>
+                    <tbody>
                     @if($predictions)
-                        <tbody>
                         @foreach($predictions as $team => $percent)
 
                             <tr>
@@ -163,8 +163,8 @@
                                 <td> {{ $percent }} %</td>
                             </tr>
                         @endforeach
-                        </tbody>
                     @endif
+                    </tbody>
                 </table>
             </div>
         </div>

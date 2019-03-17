@@ -118,7 +118,7 @@ $(document).ready(function () {
                 html += "</tr>";
             });
 
-            $('.prediction-wrapper tbody').empty().append(html);
+            $('.prediction-wrapper tbody').empty().html(html);
 
         });
     }

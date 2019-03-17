@@ -16,7 +16,6 @@ class SimplePrediction implements PredictionInterface
 
     protected $standingRepository;
     protected $matchRepository;
-    protected $predictions = [];
 
     public function __construct(StandingRepository $standingRepository, MatchRepository $matchRepository)
     {
@@ -27,7 +26,10 @@ class SimplePrediction implements PredictionInterface
     public function getPrediction(): array
     {
         $finished = $this->standingRepository->getAll();
-        $teams    = $this->collectionPredictions($finished);
+        if (!$this->checkIfPredictionIsNeeded()) {
+            return [];
+        }
+        $teams = $this->collectionPredictions($finished);
 
         //get top team current point and number of fixture remained for each team
         $remainedPoints = 3 * (6 - $teams[1]['played']);
@@ -75,8 +77,8 @@ class SimplePrediction implements PredictionInterface
             }
         }
 
-        $chanceByRemainedMatches = ($homeChance + $awayChance);
-        $chanceIncludingCurrentRank = $chanceByRemainedMatches  - ($rank / 2);
+        $chanceByRemainedMatches         = ($homeChance + $awayChance);
+        $chanceIncludingCurrentRank      = $chanceByRemainedMatches - ($rank / 2);
         $chanceIncludingPointsDifference = $chanceIncludingCurrentRank - (($topTeamPoint - $team['points']) / 2);
         return $chanceIncludingPointsDifference > 0 ? $chanceIncludingPointsDifference : 0;
 
@@ -93,6 +95,16 @@ class SimplePrediction implements PredictionInterface
             $teams[$item->team_id]['team_name'] = $item->name;
         });
         return $teams;
+    }
+
+    //before first week and after last week there is no prediction needed
+    public function checkIfPredictionIsNeeded()
+    {
+        $played = $this->standingRepository->checkStandingStatus();
+        if ($played->played == 0 || $played->played == 6) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -1,4 +1,7 @@
 $(document).ready(function () {
+
+    //all event listeners
+
     $(document.body).on('click', '.play-week', function (e) {
         playNextWeek(e.target.attributes['data-week']['value']);
     });
@@ -6,20 +9,17 @@ $(document).ready(function () {
     $(".simulate-all-weeks").on('click', function () {
         $.get("/play-all-weeks", function () {
             refreshFixture();
-            refreshStanding();
-            $('.prediction-wrapper').empty();
         });
     });
 
     $(".reset-all").on('click', function () {
         $.get("reset-all", function () {
-            refreshStanding();
-            setTimeout(function () {
-                refreshFixture();
-                $('.prediction-wrapper').empty();
-            }, 1000);
+            refreshFixture();
         });
     });
+
+
+    //functions to do each event task
 
     function refreshFixture() {
         $.get("/fixtures", function (data) {
@@ -29,17 +29,17 @@ $(document).ready(function () {
             showData.hide();
             $.each(data.weeks, function (i, week) {
                 var html = "";
-                html += "<tr><td colspan='3' style='font-weight: bold; text-align: center;background: skyblue;'>" + week.title + " Week Matches</td></tr>";
+                html += "<tr><td colspan='3' class='fixtures-box_header'>" + week.title + " Week Matches</td></tr>";
                 $.each(data.items[week.id], function (i, item) {
                     html += "<tr>";
-                    html += "<td style='text-align: center;'><img width='30' height='30' src='/images/home_blue.png'><img width='50' height='50' src='/images/" + item.home_shirt + "'>" + item.home_team + "</td>";
-                    html += "<td style='text-align: center;'>" + item.home_team_goal + " - " + item.away_team_goal + "</td>";
-                    html += "<td style='text-align: center;'><img width='30' height='30' src='/images/airplane_blue.png'><img width='50' height='50' src='/images/" + item.away_shirt + "'>" + item.away_team + "</td>";
+                    html += "<td class='make-center'><img width='30' height='30' src='/images/home_blue.png'><img width='60' height='60' src='/images/" + item.home_shirt + "'>" + item.home_team + "</td>";
+                    html += "<td class='make-center'>" + item.home_team_goal + " - " + item.away_team_goal + "</td>";
+                    html += "<td class='make-center'><img width='30' height='30' src='/images/airplane_blue.png'><img width='60' height='60' src='/images/" + item.away_shirt + "'>" + item.away_team + "</td>";
                     html += "</tr>";
                 });
                 if (data.items[week.id][0].status == 0) {
                     html += "<tr>";
-                    html += "<td colspan='5' style='border: none; text-align: center;'>";
+                    html += "<td colspan='5' class='weekly-simulate-button make-center'>";
                     html += "<button  data-week='" + week.id + "' class='btn btn-primary play-week'> Simulate " + week.title + " Week  </button>";
                     html += "</td>";
                     html += "</tr>"
@@ -48,6 +48,8 @@ $(document).ready(function () {
             });
 
             showData.show('slow');
+            refreshStanding();
+            prediction();
         });
     }
 
@@ -60,7 +62,7 @@ $(document).ready(function () {
 
                 var html = "";
                 html += "<tr>";
-                html += "<td><img width='50' height='50' src='/images/" + item.logo + "' />" + item.name + "</td>";
+                html += "<td><img width='50' height='50' src='/images/" + item.logo + "' /> " + item.name + "</td>";
                 html += "<td>" + item.played + "</td>";
                 html += "<td>" + item.won + "</td>";
                 html += "<td>" + item.draw + "</td>";
@@ -101,34 +103,15 @@ $(document).ready(function () {
             });
             showData.show('slow');
 
-
-            refreshFixture();
-            refreshStanding();
         });
 
-        if (weekId < 6) {
-            prediction();
-        } else {
-            $('.prediction-wrapper').empty();
-        }
+        refreshFixture();
     }
 
     function prediction() {
         $.get("/prediction", function (data) {
 
-            $('.prediction-wrapper').empty();
-
             var html = "";
-            html += "<h3 style='text-align: center; margin-top:50px; width: 100%;'>Champion Prediction</h3>";
-            html += "<table class='table table-dark' style='width: 100%;'>";
-            html += "<thead>";
-            html += "<tr>";
-            html += "<th scope='col'>Team</th>";
-            html += "<th scope='col'>Percentage</th>";
-            html += "</tr>";
-            html += "</thead>";
-            html += "<tbody>";
-
             $.each(data.items, function (team, percent) {
                 html += "<tr>";
                 html += "<th scope='row'>" + team + "</th>";
@@ -136,13 +119,10 @@ $(document).ready(function () {
                 html += "</tr>";
             });
 
-
-            html += "</tbody>";
-            html += "</table>";
-
-            $('.prediction-wrapper').append(html);
+            $('.prediction-wrapper tbody').empty().append(html);
 
         });
     }
+
 });
 

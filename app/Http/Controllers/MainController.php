@@ -34,16 +34,16 @@ class MainController extends Controller
     public function getStarting()
     {
 
-        $fixture    = $this->matchRepository->getFixture();
-        $collection = collect($fixture);
-        $matches    = $collection->groupBy('week_id');
+        $matches     = $this->matchRepository->getFixture()->groupBy('week_id');
+        $predictions = (new SimplePrediction($this->standingRepository, $this->matchRepository))->getPrediction();
 
         return view(
             'landing',
             [
                 'standing' => $this->standingRepository->getAll(),
                 'weeks' => $this->matchRepository->getWeeks(),
-                'matches' => $matches->toArray()
+                'matches' => $matches,
+                'predictions' => $predictions
             ]);
 
     }
@@ -59,6 +59,7 @@ class MainController extends Controller
         $this->matchRepository->truncateMatches();
         $this->standingRepository->truncateStanding();
         $this->makeFixtures();
+        return response()->json(['status' => 'ok'], 200);
     }
 
     public function getStandings()
@@ -68,11 +69,9 @@ class MainController extends Controller
 
     public function getFixtures()
     {
-        $weeks      = $this->matchRepository->getWeeks();
-        $fixture    = $this->matchRepository->getFixture();
-        $collection = collect($fixture);
-        $grouped    = $collection->groupBy('week_id');
-        return response()->json(['weeks' => $weeks, 'items' => $grouped->toArray()]);
+        $weeks   = $this->matchRepository->getWeeks();
+        $fixture = $this->matchRepository->getFixture()->groupBy('week_id');
+        return response()->json(['weeks' => $weeks, 'items' => $fixture]);
     }
 
 

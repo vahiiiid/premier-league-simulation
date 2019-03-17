@@ -75,4 +75,9 @@ class StandingRepository
         $this->standing->truncate();
     }
 
+    public function checkStandingStatus()
+    {
+        return $this->standing->select('played')->first();
+    }
+
 }

@@ -1,23 +1,24 @@
 # Premier League Simulation
 
-A fully featured Lightweight premier league fixture and result simulator powered by Laravel 
+A fully featured, Lightweight premier league fixture and result simulator powered by Laravel 
+
 list of features:
 
 | Feature                                  | Status        |
 | ---------------------------------------- | ------------- |
 | Random weekly match                      | &#9745;       |
 | Simulate each week separately            | &#9745;       |
-| Simulate all weeks immediately           | &#9745;       |
-| reset all played match                   | &#9745;       |
-| predict champions                        | &#9745;       |
-| different win chance for teams           | &#9745;       |
-| home and away fixtures                   | &#9745;       |
-| can increase number of default 4 teams   | &#9745;       |
+| Simulate all weeks at once               | &#9745;       |
+| Reset all played match                   | &#9745;       |
+| Predict champion                         | &#9745;       |
+| Different win chance for teams           | &#9745;       |
+| Home and Away fixtures draw              | &#9745;       |
+| Increasing number of teams (default 4)   | &#9745;       |
 | edit played match result                 | &#9744;       |
 
 ## Getting Started
 
-clone the project at first:
+Clone the project:
 
 ```
 > git clone https://github.com/vahiiiid/premier-league-simulation.git
@@ -47,7 +48,7 @@ for installing just do below steps after cloning:
 this project includes unit tests for services such as prediction, simulator and fixtureDrawer
 
 ```
-> run the unit tests "vendor/bin/phpunit"
+> vendor/bin/phpunit
 ```
 now your project is ready to serve:
 

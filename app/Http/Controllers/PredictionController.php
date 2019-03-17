@@ -15,12 +15,15 @@ class PredictionController extends Controller
     public function __construct(StandingRepository $standingRepository, MatchRepository $matchRepository)
     {
         $this->standingRepository = $standingRepository;
-        $this->matchRepository = $matchRepository;
+        $this->matchRepository    = $matchRepository;
     }
 
     public function getPrediction()
     {
         $chart = (new SimplePrediction($this->standingRepository, $this->matchRepository))->getPrediction();
-        return response()->json(['items' => $chart]);
+        return response()->json([
+            'status' => 'ok',
+            'items' => $chart
+        ], 200);
     }
 }

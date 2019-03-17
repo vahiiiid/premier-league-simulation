@@ -21,7 +21,6 @@ class StandingRepository
     {
         $this->standing = $standing;
         $this->team = $team;
-
     }
 
     public function checkStanding()

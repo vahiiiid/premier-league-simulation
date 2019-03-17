@@ -15,13 +15,14 @@ class SimulatorController extends Controller
     public function __construct(StandingRepository $standingRepository, MatchRepository $matchRepository)
     {
         $this->standingRepository = $standingRepository;
-        $this->matchRepository = $matchRepository;
+        $this->matchRepository    = $matchRepository;
     }
 
     public function playAllWeeks()
     {
         $matches = $this->matchRepository->getAllMatches();
         (new MatchSimulator($this->standingRepository, $this->matchRepository))->bulkSimulate($matches);
+        return response()->json(['status' => 'ok'], 200);
     }
 
 
@@ -31,6 +32,9 @@ class SimulatorController extends Controller
         (new MatchSimulator($this->standingRepository, $this->matchRepository))->bulkSimulate($matches);
         $result = $this->matchRepository->getFixtureByWeekId($week);
 
-        return response()->json(['matches' => $result]);
+        return response()->json([
+            'status' => 'ok',
+            'matches' => $result
+        ], 201);
     }
 }

@@ -27,8 +27,8 @@ class MatchSimulator implements ResultSimulatorInterface
     {
         $home = $this->standingRepository->getStandingByTeamId($match->home_team);
         $away = $this->standingRepository->getStandingByTeamId($match->away_team);
-        $homeScore = $this->matchRepository->generateScore(true, $home->id);
-        $awayScore = $this->matchRepository->generateScore(false, $away->id);
+        $homeScore = $this->generateScore(true, $home->id);
+        $awayScore = $this->generateScore(false, $away->id);
 
         $this->updateMatchScore($homeScore, $awayScore, $home, $away);
         return $this->matchRepository->resultSaver($match, $homeScore, $awayScore);
@@ -45,6 +45,13 @@ class MatchSimulator implements ResultSimulatorInterface
     public function updateMatchScore($homeScore, $awayScore, $home, $away)
     {
         $this->matchRepository->updateMatchScore($homeScore, $awayScore, $home, $away);
+    }
+
+
+    public function generateScore(bool $is_home, int $teamRank)
+    {
+        //this generator is assuming home team and also current rank to generate result
+        return $is_home ? rand(0, 10) : rand(0, 10 - $teamRank);
     }
 
 }

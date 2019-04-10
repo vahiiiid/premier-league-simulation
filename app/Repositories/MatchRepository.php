@@ -133,7 +133,7 @@ class MatchRepository
     public function getAllMatchesByTeamId($teamId)
     {
         return $this->match
-            ->where(function ($q) use ($teamId){
+            ->where(function ($q) use ($teamId) {
                 $q->where('home_team', '=', $teamId)
                     ->orWhere('away_team', '=', $teamId);
             })
@@ -149,27 +149,20 @@ class MatchRepository
      */
     public function updateMatchScore($homeScore, $awayScore, $home, $away)
     {
+        $goalDrawn = abs($awayScore - $homeScore);
+
         if ($homeScore > $awayScore) {
-            $home->won        += 1;
-            $home->points     += 3;
-            $home->goal_drawn += ($homeScore - $awayScore);
-            $away->lose       += 1;
-            $away->goal_drawn += ($awayScore - $homeScore);
+            $home->won($goalDrawn);
+            $away->lose($goalDrawn);
+
         } elseif ($awayScore > $homeScore) {
-            $away->won        += 1;
-            $away->points     += 3;
-            $away->goal_drawn += ($awayScore - $homeScore);
-            $home->lose       += 1;
-            $home->goal_drawn += ($homeScore - $awayScore);
+            $away->won($goalDrawn);
+            $home->lose($goalDrawn);
         } else {
-            $home->draw   += 1;
-            $away->draw   += 1;
-            $home->points += 1;
-            $away->points += 1;
+            $home->draw();
+            $away->draw();
         }
 
-        $home->played += 1;
-        $away->played += 1;
         $home->save();
         $away->save();
     }
@@ -181,13 +174,6 @@ class MatchRepository
     public function truncateMatches()
     {
         $this->match->truncate();
-    }
-
-
-    public function generateScore(bool $is_home, int $teamRank)
-    {
-        //this generator is assuming home team and also current rank to generate result
-        return $is_home ? rand(2, 8 - $teamRank) : rand(0, 8 - $teamRank);
     }
 
     public function resultSaver($match, $homeScore, $awayScore)
